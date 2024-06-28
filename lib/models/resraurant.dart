@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:food_app/models/cart_item.dart';
 import 'package:food_app/models/food.dart';
 
 class Restaurant extends ChangeNotifier {
@@ -30,12 +32,11 @@ class Restaurant extends ChangeNotifier {
     ),
     Food(
       name: "Двойной рончо",
-      description: "Сытный и популятрный бургер Мексики",
+      description: "Сытный и популярный бургер Мексики",
       imahePath: "lib/images/burgers/burger3.png",
       price: 250,
       category: FoodCategory.burgers,
       availableAddons: [
-        Addon(name: "Дополнительная котлета", price: 29),
         Addon(name: "Халапенья", price: 20),
         Addon(name: "Дольки огурца", price: 15),
         Addon(name: "Дольки помидора", price: 15),
@@ -133,7 +134,6 @@ class Restaurant extends ChangeNotifier {
       price: 130,
       category: FoodCategory.sides,
       availableAddons: [
-        Addon(name: "Красный соус", price: 29),
         Addon(name: "Сырный соус", price: 20),
         Addon(name: "Чесночный соус", price: 20),
         Addon(name: "Соус барбекю", price: 20),
@@ -157,11 +157,9 @@ class Restaurant extends ChangeNotifier {
       price: 130,
       category: FoodCategory.sides,
       availableAddons: [
-        Addon(name: "Красный соус", price: 29),
         Addon(name: "Сырный соус", price: 20),
         Addon(name: "Чесночный соус", price: 20),
         Addon(name: "Соус барбекю", price: 20),
-        Addon(name: "Сырные дольки", price: 20),
       ],
     ),
     Food(
@@ -317,8 +315,9 @@ class Restaurant extends ChangeNotifier {
     G E T T E R S
   
   */
-  
+
   List<Food> get menu => _menu;
+  List<CartItem> get catr => _cart;
 
   /*
   
@@ -328,14 +327,79 @@ class Restaurant extends ChangeNotifier {
 
   */
 
+  final List<CartItem> _cart = [];
 
-/*
+  void addToCart(Food food, List<Addon> selectedAddons) {
+    CartItem? cartItem = _cart.firstWhereOrNull((item) {
+      bool isSameFood = item.food == food;
+
+      bool isSameAddons =
+          ListEquality().equals(item.selectedAddons, selectedAddons);
+
+      return isSameFood && isSameAddons;
+    });
+    if (cartItem != null) {
+      cartItem.quantity++;
+    } 
+    else {
+      _cart.add(
+        CartItem(
+          food: food,
+          selectedAddons: selectedAddons));
+    }
+    notifyListeners();
+  }
+
+  void removeFromCart(CartItem cartItem) {
+    int cartIdex = _cart.indexOf(cartItem);
+    if (cartIdex != -1) {
+      if (_cart[cartIdex].quantity > 1) {
+        _cart[cartIdex].quantity--;
+      } else {
+        _cart.removeAt(cartIdex);
+      }
+    }
+      notifyListeners();
+
+  }
+
+  double hetTotalPrice () {
+    double total = 0.0;
+
+    for (CartItem cartItem in _cart) {
+      double itemTotal = cartItem.food.price;
+
+      for (Addon addon in cartItem.selectedAddons) {
+        itemTotal += addon.price;
+      }
+      total += itemTotal * cartItem.quantity;
+    }
+    return total;
+  }
+  
+  int getTotalCount() {
+    int totalItemCount = 0;
+
+    for(CartItem cartItem in _cart) {
+      totalItemCount += cartItem.quantity;
+    }
+    return totalItemCount;
+  }
+
+  void claerCart() {
+    _cart.clear();
+    notifyListeners();
+  }
+  
+  
+  
+  
+  
+  /*
+
+
   
     H E L P E R S 
   
   */
-
-
-
-
 }

@@ -16,23 +16,50 @@ class FoodTile extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: onTap,
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(food.name),
-                    Text(food.price.toString()),
-                    Text(food.description),
-
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(food.name),
+                      Text(
+                        food.price.toString() + ' ₽',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        food.description,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              // food image
-              Image.asset(food.imahePath, height: 120,),
-            ],
+                const SizedBox(width: 15),
+                // food image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    food.imahePath,
+                    height: 120,
+                  ),
+                ),
+              ],
+            ),
           ),
+        ),
+         Divider(
+          color:Theme.of(context).colorScheme.tertiary,
+          endIndent: 25,
+          indent: 25,
         ),
       ],
     );
